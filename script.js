@@ -1,17 +1,16 @@
 // -------importing sha256 from crypto module -------
+const { clear } = require("console");
 const { createHash } = require("crypto");
 // -------Creating genesis block ---------
 const genesisBlock = {
   blockId: 1,
-  timeStamp: "temp",
+  timeStamp: new Date(),
   nonce: "",
-  transaction: "shreya=>lakshmi=>42s",
+  transaction: hash("shreyaa=>lakshmi=>42s"),
   previousBlockHash:
     "0000000000000000000000000000000000000000000000000000000000000000",
-  currentBlockHash: hash(
-    `${this.blockId}${this.nonce}${this.timeStamp}${this.transaction}${this.previousBlockHash}`
-  ),
 };
+genesisBlock.currentBlockHash = `${genesisBlock.blockId}${genesisBlock.nonce}${genesisBlock.timeStamp}${genesisBlock.transaction}${genesisBlock.previousBlockHash}`;
 // -------Creating Blockchain Array ---------
 const blockChain = [genesisBlock];
 // ------- Mining Block ---------
@@ -22,7 +21,7 @@ function mineBlock(block, difficulty) {
   ) {
     block.nonce = ++block.nonce;
     block.currentBlockHash = hash(
-      `${block.blockId}${block.nonce}${this.timeStamp}${this.transaction}${block.previousBlockHash}`
+      `${block.blockId}${block.nonce}${block.timeStamp}${block.transaction}${block.previousBlockHash}`
     );
   }
   console.log(
@@ -36,24 +35,23 @@ function hash(string) {
   return createHash("sha256").update(string).digest("hex");
 }
 // ------- Creating a Block ---------
-function createBlock(timeStamp, transaction) {
+function createBlock(transaction) {
+  const date = new Date();
+  const createdTimeOfBlock = `${date.toLocaleDateString()} ${date.toLocaleTimeString()} ${date.getMilliseconds()}`;
   let lengthOfChain = blockChain.length;
   let block = {
     blockId: ++id,
-    timeStamp,
+    timeStamp: createdTimeOfBlock,
     nonce: 11,
     transaction: hash(transaction),
     previousBlockHash: blockChain[lengthOfChain - 1].currentBlockHash,
-    currentBlockHash: hash(
-      `${this.blockId}${this.nonce}${this.timeStamp}${this.transaction}${this.previousBlockHash}`
-    ),
   };
-
+  block.currentBlockHash = `${block.blockId}${block.nonce}${block.timeStamp}${block.transaction}${block.previousBlockHash}`;
   mineBlock(block, 3);
   blockChain.push(block);
 }
-createBlock("23 - 3 - 2023", "geetaaa=>seeta=>50btc");
-createBlock("23 - 3 - 2023", "ram=>seeta=>50btc");
-createBlock("23 - 3 - 2023", "ram=>lakshman=>150btc");
-createBlock("23 - 3 - 2023", "shreya=>lakshmi=>42s");
+createBlock("geetaaa=>seeta=>50btc");
+createBlock("ram=>seeta=>50btc");
+createBlock("ram=>lakshman=>150btc");
+createBlock("RamVishnu=>SeetaLakshmi=>42s");
 console.log(blockChain);
