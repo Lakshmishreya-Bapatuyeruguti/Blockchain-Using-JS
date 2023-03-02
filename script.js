@@ -1,10 +1,11 @@
 // -------importing sha256 from crypto module -------
 const { clear } = require("console");
 const { createHash } = require("crypto");
+const date = new Date();
 // -------Creating genesis block ---------
 const genesisBlock = {
   blockId: 1,
-  timeStamp: new Date(),
+  timeStamp: `${date.toLocaleDateString()} ${date.toLocaleTimeString()} ${date.getMilliseconds()}`,
   nonce: "",
   transaction: hash("shreyaa=>lakshmi=>42s"),
   previousBlockHash:
