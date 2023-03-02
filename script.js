@@ -37,6 +37,7 @@ function hash(string) {
 // ------- Creating a Block ---------
 function createBlock(transaction) {
   const date = new Date();
+  // -------- Adding Timestamp ---------
   const createdTimeOfBlock = `${date.toLocaleDateString()} ${date.toLocaleTimeString()} ${date.getMilliseconds()}`;
   let lengthOfChain = blockChain.length;
   let block = {
