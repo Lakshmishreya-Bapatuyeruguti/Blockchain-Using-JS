@@ -1,7 +1,6 @@
-// -------importing sha256 from crypto module -------
 const { createHash } = require("crypto");
 const date = new Date();
-// -------Creating genesis block ---------
+// Creating genesis block
 const genesisBlock = {
   blockId: 1,
   timeStamp: `${date.toLocaleDateString()} ${date.toLocaleTimeString()} ${date.getMilliseconds()}`,
@@ -11,20 +10,19 @@ const genesisBlock = {
     "0000000000000000000000000000000000000000000000000000000000000000",
 };
 genesisBlock.currentBlockHash = `${genesisBlock.blockId}${genesisBlock.nonce}${genesisBlock.timeStamp}${genesisBlock.transactions}${genesisBlock.previousBlockHash}`;
-// -------Creating Blockchain Array ---------
+// Creating Blockchain Array
 const blockChain = [genesisBlock];
-// ----------- Merkle tree --------------------
-
+//  Merkle tree
 function merkleTree(transactions) {
+  // Hashing all Transactions
   let hashedTransactions = transactions.map((transaction) => hash(transaction));
-  console.log(hashedTransactions);
   let noOfTransactions = hashedTransactions.length;
   if (noOfTransactions % 2 !== 0) {
     hashedTransactions[noOfTransactions] =
       hashedTransactions[noOfTransactions - 1];
   }
-  console.log(hashedTransactions);
   let transactionTree = hashedTransactions;
+  // Combining all transactions
   while (transactionTree.length > 1) {
     const combinedTransactions = [];
     for (let i = 0; i < transactionTree.length; i += 2) {
@@ -35,12 +33,10 @@ function merkleTree(transactions) {
     }
     transactionTree = combinedTransactions;
   }
-
   let root = transactionTree[0];
-  console.log("ct", transactionTree[0]);
   return root;
 }
-// ------- Mining Block ---------
+// Mining Block
 function mineBlock(block, difficulty) {
   while (
     block.currentBlockHash.substring(0, difficulty) !==
@@ -51,26 +47,23 @@ function mineBlock(block, difficulty) {
       `${block.blockId}${block.nonce}${block.timeStamp}${block.transactions}${block.previousBlockHash}`
     );
   }
-  console.log(
-    "Mining Block: " + block.currentBlockHash + "nonce =" + block.nonce
-  );
 }
 mineBlock(blockChain[0], 3);
 let id = 1;
-// ------- Generating Hash ----------
+// Generating Hash
 function hash(string) {
   return createHash("sha256").update(string).digest("hex");
 }
-
-// ------- Creating a Block ---------
+// Creating a Block
 function createBlock(transactions) {
-  // -----------calculating merkle tree root value ----------
+  // calculating merkle tree root value
   let merkleTransaction = merkleTree(transactions);
-  console.log("mmmmct", hash(merkleTransaction));
+
   const date = new Date();
-  // -------- Adding Timestamp ---------
+  //Adding Timestamp
   const createdTimeOfBlock = `${date.toLocaleDateString()} ${date.toLocaleTimeString()} ${date.getMilliseconds()}`;
   let lengthOfChain = blockChain.length;
+  //  Adding Block
   let block = {
     blockId: ++id,
     timeStamp: createdTimeOfBlock,
@@ -82,20 +75,29 @@ function createBlock(transactions) {
   mineBlock(block, 3);
   blockChain.push(block);
 }
+// Validation of Blocks
+function validationOfBlockchain() {
+  console.log("before change =====", blockChain[1].transactions);
+  // blockChain[1].transactions = hash("Changed the transactions");
+  let prevHash = blockChain[2].previousBlockHash;
+  console.log("After change =====", blockChain[1].transactions);
+  blockChain[1].currentBlockHash = hash(
+    `${blockChain[1].blockId}${blockChain[1].nonce}${blockChain[1].timeStamp}${blockChain[1].transactions}${blockChain[1].previousBlockHash}`
+  );
+  // mineBlock(blockChain[1], 3);
+  if (prevHash !== blockChain[1].currentBlockHash) {
+    console.log("Block Validation : FAIL");
+  } else {
+    console.log("Block Validation : PASS");
+  }
+}
+//  Adding Transactions Into Blocks
 createBlock(["geetaaa=>seeta=>50btc", "ram=>seeta=>50btc"]);
-// createBlock("ram=>seeta=>50btc");
-// createBlock("ram=>lakshman=>150btc");
+createBlock(["ram=>seeta=>50btc", "ram=>lakshman=>150btc"]);
 createBlock([
   "geetaaa=>seeta=>50btc",
   "ram=>seeta=>50btc",
-  "RamVishnu=>SeetaLakshmi=>42s",
+  "RamVishnu=>SeetaLakshmi=>42btc",
 ]);
 console.log(blockChain);
-// Validation
-function validationOfBlockchain() {
-  blockChain[1].transactions = ["Changed the transactions"];
-  if (blockChain[2].previousBlockHash !== blockChain[1].currentBlockHash) {
-    console.log("Tampereddddddd");
-  }
-}
 validationOfBlockchain();
